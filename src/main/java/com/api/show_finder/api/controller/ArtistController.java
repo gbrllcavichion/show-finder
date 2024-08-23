@@ -3,6 +3,7 @@ package com.api.show_finder.api.controller;
 import com.api.show_finder.api.dto.Artist;
 import com.api.show_finder.api.dto.ArtistRepository;
 import com.api.show_finder.api.service.SpotifyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ public class ArtistController {
     private final SpotifyService spotifyService;
     private final ArtistRepository artistRepository;
 
+    @Autowired
     public ArtistController(SpotifyService spotifyService, ArtistRepository artistRepository) {
         this.spotifyService = spotifyService;
         this.artistRepository = artistRepository;
