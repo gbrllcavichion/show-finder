@@ -24,10 +24,9 @@ public class ArtistController {
     }
 
     @GetMapping("/top")
-    public List<Artist> getTopArtists(OAuth2AuthenticationToken authentication) {
-        OAuth2User user = authentication.getPrincipal();
-        String token = authentication.getAuthorizedClientRegistrationId();
-
+    public List<Artist> getTopArtists(OAuth2AuthenticationToken authenticationToken) {
+        String token = authenticationToken.getPrincipal().getAttributes().get("access_token").toString();
         return spotifyService.getUserTopArtists(token);
     }
+
 }
