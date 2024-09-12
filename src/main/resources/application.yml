@@ -1,0 +1,34 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/show-finder
+
+  security:
+    oauth2:
+      client:
+        registration:
+          spotify:
+            client-id: f9f04173d82b4a7fafc1fc7e45b2083f
+            client-secret: e5189930e5754db0b63aa75d5d6d1a88
+            scope: user-top-read
+            redirect-uri: "{baseUrl}/login/oauth2/code/spotify"
+            authorization-grant-type: authorization_code
+            client-name: Spotify
+        provider:
+          spotify:
+            authorization-uri: https://accounts.spotify.com/authorize
+            token-uri: https://accounts.spotify.com/api/token
+            user-info-uri: https://api.spotify.com/v1/me
+            user-name-attribute: id
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org:
+      springframework:
+        security=DEBUG:
