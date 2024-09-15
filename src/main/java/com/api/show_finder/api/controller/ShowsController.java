@@ -1,9 +1,10 @@
 package com.api.show_finder.api.controller;
 
 import com.api.show_finder.api.dto.ConcertDetails;
-import com.api.show_finder.api.service.EventimScrapingService;
+import com.api.show_finder.api.service.EventimService;
 import com.api.show_finder.api.service.TicketScrapingService;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -11,11 +12,11 @@ import java.util.List;
 @RestController
 public class ShowsController {
     private final TicketScrapingService ticketScrapingService;
-    private final EventimScrapingService eventimScrapingService;
+    private final EventimService eventimService;
 
-    public ShowsController(TicketScrapingService ticketScrapingService, EventimScrapingService eventimScrapingService) {
+    public ShowsController(TicketScrapingService ticketScrapingService, EventimService eventimService) {
         this.ticketScrapingService = ticketScrapingService;
-        this.eventimScrapingService = eventimScrapingService;
+        this.eventimService = eventimService;
     }
 
     @GetMapping("/fetch-ticketmaster-concerts")
@@ -23,8 +24,8 @@ public class ShowsController {
         return ticketScrapingService.fetchConcertDetails();
     }
 
-    @GetMapping("/fetch-eventim-concerts")
-    public List<ConcertDetails> fetchEventimConcerts() {
-        return eventimScrapingService.fetchInternationalConcertDetails();
+    @GetMapping("/fetch-international-shows")
+    public String fetchInternationalShows() {
+        return eventimService.fetchInternationalShows();
     }
 }
