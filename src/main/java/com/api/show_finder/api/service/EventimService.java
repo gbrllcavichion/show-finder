@@ -1,5 +1,7 @@
 package com.api.show_finder.api.service;
 
+import com.api.show_finder.api.dto.ConcertDetails;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -16,8 +20,9 @@ public class EventimService {
 
     private static final String EVENTIM_API_URL = "https://public-api.eventim.com/websearch/search/api/exploration/v2/productGroups";
 
-    public String fetchInternationalShows() {
-        StringBuilder eventimData = new StringBuilder();
+    public List<ConcertDetails> fetchInternationalShows() {
+        List<ConcertDetails> concertDetailsList = new ArrayList<>();
+
         try {
             String webId = URLEncoder.encode("web__eventim-com-br", StandardCharsets.UTF_8);
             String language = URLEncoder.encode("pt", StandardCharsets.UTF_8);
@@ -32,16 +37,19 @@ public class EventimService {
             String response = restTemplate.getForObject(new URI(url), String.class);
 
             ObjectMapper mapper = new ObjectMapper();
-            Object jsonObject = mapper.readValue(response, Object.class);
-            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            String prettyJson = writer.writeValueAsString(jsonObject);
+            JsonNode rootNode = mapper.readTree(response);
 
-            eventimData.append(prettyJson);
+            for (JsonNode productGroup : rootNode.get("productGroups")) {
+                String artistAndCity = productGroup.get("name").asText();
+                String eventDate = productGroup.get("startDate").asText();
+
+                concertDetailsList.add(new ConcertDetails(artistAndCity, eventDate));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return eventimData.toString();
+        return concertDetailsList;
     }
 }

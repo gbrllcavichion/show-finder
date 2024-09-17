@@ -25,7 +25,7 @@ public class ShowsController {
     }
 
     @GetMapping("/fetch-international-shows")
-    public String fetchInternationalShows() {
+    public List<ConcertDetails> fetchInternationalShows() {
         return eventimService.fetchInternationalShows();
     }
 }
