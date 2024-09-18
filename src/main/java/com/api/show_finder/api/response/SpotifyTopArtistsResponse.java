@@ -1,6 +1,6 @@
 package com.api.show_finder.api.response;
 
-import com.api.show_finder.api.dto.Artist;
+import com.api.show_finder.domain.model.Artist;
 
 import java.util.List;
 

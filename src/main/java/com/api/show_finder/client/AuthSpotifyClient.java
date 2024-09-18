@@ -1,6 +1,6 @@
 package com.api.show_finder.client;
 
-import com.api.show_finder.api.dto.LoginResponse;
+import com.api.show_finder.api.response.LoginResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;

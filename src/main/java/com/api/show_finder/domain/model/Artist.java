@@ -1,4 +1,4 @@
-package com.api.show_finder.api.dto;
+package com.api.show_finder.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

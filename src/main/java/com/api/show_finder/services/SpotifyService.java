@@ -1,6 +1,6 @@
-package com.api.show_finder.api.service;
+package com.api.show_finder.services;
 
-import com.api.show_finder.api.dto.Artist;
+import com.api.show_finder.domain.model.Artist;
 import com.api.show_finder.api.response.SpotifyTopArtistsResponse;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;

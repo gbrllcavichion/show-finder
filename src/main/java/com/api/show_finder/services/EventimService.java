@@ -1,9 +1,8 @@
-package com.api.show_finder.api.service;
+package com.api.show_finder.services;
 
-import com.api.show_finder.api.dto.ConcertDetails;
+import com.api.show_finder.domain.model.ConcertDetails;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

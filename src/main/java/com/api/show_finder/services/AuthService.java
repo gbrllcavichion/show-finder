@@ -1,7 +1,6 @@
-package com.api.show_finder.api.service;
+package com.api.show_finder.services;
 
-import com.api.show_finder.api.dto.LoginRequest;
-import com.api.show_finder.api.dto.LoginResponse;
+import com.api.show_finder.api.response.LoginResponse;
 import com.api.show_finder.client.AuthSpotifyClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;

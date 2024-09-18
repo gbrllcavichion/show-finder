@@ -1,8 +1,8 @@
-package com.api.show_finder.api.controller;
+package com.api.show_finder.controller;
 
-import com.api.show_finder.api.dto.ConcertDetails;
-import com.api.show_finder.api.service.EventimService;
-import com.api.show_finder.api.service.TicketScrapingService;
+import com.api.show_finder.domain.model.ConcertDetails;
+import com.api.show_finder.services.EventimService;
+import com.api.show_finder.services.TicketScrapingService;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.RestController;

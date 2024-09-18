@@ -1,7 +1,6 @@
-package com.api.show_finder.api.service;
+package com.api.show_finder.services;
 
-import com.api.show_finder.api.dto.Artist;
-import com.api.show_finder.api.dto.ConcertDetails;
+import com.api.show_finder.domain.model.ConcertDetails;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
