@@ -1,16 +1,21 @@
 package com.api.show_finder.domain.model;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @Document(collection = "users")
 public class User {
+    @Id
     private String id;
     private String email;
+    private String password;
+    private String displayName;
     private List<String> favoriteArtists;
     private String spotifyToken;
 
+    // Getters e Setters
     public String getId() {
         return id;
     }
@@ -27,6 +32,14 @@ public class User {
         this.email = email;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public List<String> getFavoriteArtists() {
         return favoriteArtists;
     }
@@ -41,5 +54,13 @@ public class User {
 
     public void setSpotifyToken(String spotifyToken) {
         this.spotifyToken = spotifyToken;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

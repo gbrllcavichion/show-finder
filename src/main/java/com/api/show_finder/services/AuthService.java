@@ -19,7 +19,7 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public String getAccessTokenFromCode(String code, String clientId, String clientSecret, String redirectUri, String userEmail) {
+    public String getAccessTokenFromCode(String code, String clientId, String clientSecret, String redirectUri) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("code", code);
@@ -28,16 +28,6 @@ public class AuthService {
         body.add("client_secret", clientSecret);
 
         LoginResponse response = authSpotifyClient.loginWithAuthorizationCode(body);
-        String accessToken = response.getAccessToken();
-
-        User user = userRepository.findByEmail(userEmail);
-        if (user != null) {
-            user.setSpotifyToken(accessToken);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("Usuário não encontrado!");
-        }
-
-        return accessToken;
+        return response.getAccessToken();
     }
 }
