@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +28,36 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginUserRequest loginRequest) {
+        try {
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+            );
+
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+            String jwt = jwtTokenProvider.generateToken(authentication);
+
+
+            return ResponseEntity.ok(new JwtResponse(jwt));
+
+        } catch (AuthenticationException e) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        }
+    }
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
@@ -41,23 +66,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já cadastrado.");
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso.");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginUserRequest loginRequest) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtTokenProvider.generateToken(authentication);
-
-            return ResponseEntity.ok(new JwtResponse(jwt));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
-        }
-    }
 }

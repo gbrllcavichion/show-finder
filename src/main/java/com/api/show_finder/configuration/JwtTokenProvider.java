@@ -2,6 +2,7 @@ package com.api.show_finder.configuration;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,8 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret = "sua_chave_secreta";
+    @Value("${spring.jwt.secret}")
+    private String jwtSecret;
     private final long jwtExpirationInMs = 604800000L; // 7 dias
 
     public String generateToken(Authentication authentication) {
