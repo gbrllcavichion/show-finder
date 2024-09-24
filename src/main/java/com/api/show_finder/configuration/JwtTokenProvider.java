@@ -14,22 +14,23 @@ public class JwtTokenProvider {
 
     @Value("${spring.jwt.secret}")
     private String jwtSecret;
-    private final long jwtExpirationInMs = 604800000L; // 7 dias
+
+    private final long jwtExpirationMs = 86400000;
 
     public String generateToken(Authentication authentication) {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             return false;
         }
     }
