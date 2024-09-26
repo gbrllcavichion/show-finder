@@ -13,6 +13,8 @@ public class User {
     private String username;
     private String password;
     private String displayName;
+    private List<String> favoriteArtists;
+    private String spotifyToken;
     public User() {
 
     }
@@ -82,7 +84,6 @@ public class User {
         this.spotifyToken = spotifyToken;
     }
 
-    private List<String> favoriteArtists;
-    private String spotifyToken;
+
 
 }

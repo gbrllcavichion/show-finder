@@ -6,9 +6,11 @@ import com.api.show_finder.configuration.JwtResponse;
 import com.api.show_finder.configuration.JwtTokenProvider;
 import com.api.show_finder.domain.model.User;
 import com.api.show_finder.domain.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -29,35 +32,46 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginUserRequest loginRequest) {
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> login(@RequestBody LoginUserRequest loginRequest, HttpServletResponse response) throws IOException {
         try {
-
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
 
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
 
             String jwt = jwtTokenProvider.generateToken(authentication);
 
-
-            return ResponseEntity.ok(new JwtResponse(jwt));
+            Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+            if (user.isPresent()) {
+                if (user.get().getSpotifyToken() == null || user.get().getSpotifyToken().isEmpty()) {
+                    String spotifyAuthUrl = "https://accounts.spotify.com/authorize?client_id=YOUR_SPOTIFY_CLIENT_ID&response_type=code&redirect_uri=YOUR_REDIRECT_URI&scope=user-top-read";
+                    return ResponseEntity.status(HttpStatus.FOUND)
+                            .header("Location", spotifyAuthUrl)
+                            .build();
+                } else {
+                    return ResponseEntity.ok(new JwtResponse(jwt));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não encontrado.");
+            }
 
         } catch (AuthenticationException e) {
-
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
@@ -71,5 +85,4 @@ public class UserController {
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso.");
     }
-
 }
