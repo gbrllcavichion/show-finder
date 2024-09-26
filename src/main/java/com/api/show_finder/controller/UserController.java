@@ -55,23 +55,27 @@ public class UserController {
 
             Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
             if (user.isPresent()) {
-                if (user.get().getSpotifyToken() == null || user.get().getSpotifyToken().isEmpty()) {
-                    String spotifyAuthUrl = "https://accounts.spotify.com/authorize?client_id=YOUR_SPOTIFY_CLIENT_ID&response_type=code&redirect_uri=YOUR_REDIRECT_URI&scope=user-top-read";
-                    return ResponseEntity.status(HttpStatus.FOUND)
-                            .header("Location", spotifyAuthUrl)
-                            .build();
-                } else {
+                User loggedInUser = user.get();
+
+                if (loggedInUser.getSpotifyToken() != null && !loggedInUser.getSpotifyToken().isEmpty()) {
                     return ResponseEntity.ok(new JwtResponse(jwt));
+                } else {
+                    String spotifyAuthUrl = "https://accounts.spotify.com/authorize"
+                            + "?client_id=f9f04173d82b4a7fafc1fc7e45b2083f"
+                            + "&response_type=code"
+                            + "&redirect_uri=http://localhost:8080/login/oauth2/code/spotify"
+                            + "&scope=user-top-read";
+
+                    response.sendRedirect(spotifyAuthUrl);
+                    return ResponseEntity.status(HttpStatus.FOUND).build();
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não encontrado.");
             }
-
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
