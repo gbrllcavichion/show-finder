@@ -1,14 +1,14 @@
 package com.api.show_finder.controller;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+
+@Controller
 public class DashboardController {
 
     @GetMapping("/dashboard")
-    public ResponseEntity<String> getDashboard() {
-        return ResponseEntity.ok("Bem-vindo ao dashboard!");
+    public String redirectToDashboard() {
+        return "redirect:http://localhost:3000/dashboard";
     }
 }
