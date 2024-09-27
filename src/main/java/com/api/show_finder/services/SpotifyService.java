@@ -42,6 +42,8 @@ public class SpotifyService {
                 SPOTIFY_TOP_ARTISTS_URL, HttpMethod.GET, entity, SpotifyTopArtistsResponse.class
         );
 
+        System.out.println("Artistas favoritos do usuário: " + response.getBody().getItems());
+
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody().getItems();
         } else {
