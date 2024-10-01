@@ -2,6 +2,7 @@ package com.api.show_finder.services;
 
 import com.api.show_finder.domain.model.Artist;
 import com.api.show_finder.domain.model.ConcertDetails;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,17 +18,17 @@ public class MatchService {
         this.spotifyService = spotifyService;
         this.showsService = showsService;
     }
-    public List<ConcertDetails> getMatchingConcertsForUser(String spotifyToken) {
+
+    public List<ConcertDetails> getMatchingConcertsForUser(String spotifyToken, ObjectId userId) {
         List<Artist> favoriteArtists = spotifyService.getUserTopArtists(spotifyToken);
-        List<ConcertDetails> availableConcerts = showsService.getAllAvailableConcerts();
+
+        List<ConcertDetails> availableConcerts = showsService.getUserFavoriteConcerts(userId);
 
         List<ConcertDetails> matchingConcerts = availableConcerts.stream()
                 .filter(concert -> favoriteArtists.stream()
-                        .anyMatch(artist -> concert.getEvent().contains(artist.getName()))
+                        .anyMatch(artist -> concert.getEvent().toLowerCase().contains(artist.getName().toLowerCase()))
                 )
                 .collect(Collectors.toList());
-
-        System.out.println("Shows correspondentes: " + matchingConcerts);
 
         return matchingConcerts;
     }
