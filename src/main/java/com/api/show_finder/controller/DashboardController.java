@@ -19,20 +19,5 @@ public class DashboardController {
         this.showsService = showsService;
     }
 
-    @GetMapping("/dashboard")
-    public String getDashboard(@RequestParam("userId") String userId, Model model) {
-        ObjectId objectId;
-        try {
-            objectId = new ObjectId(userId);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Parâmetro userId inválido.");
-        }
-
-        List<ConcertDetails> favoriteArtistShows = showsService.getUserFavoriteConcerts(objectId);
-
-        model.addAttribute("favoriteArtistShows", favoriteArtistShows);
-        return "dashboard";
-    }
-
 }
 

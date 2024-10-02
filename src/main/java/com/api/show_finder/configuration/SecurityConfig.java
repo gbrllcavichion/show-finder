@@ -27,7 +27,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/dashboard", true)
+                        .defaultSuccessUrl("/login-success", true)
                         .authorizationEndpoint(authorization ->
                                 authorization.baseUri("/oauth2/authorize")
                         )
@@ -38,6 +38,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
