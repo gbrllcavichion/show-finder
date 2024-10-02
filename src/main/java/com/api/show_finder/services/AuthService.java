@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Optional;
+
 @Service
 public class AuthService {
 
@@ -19,15 +21,12 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public String getAccessTokenFromCode(String code, String clientId, String clientSecret, String redirectUri) {
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("code", code);
-        body.add("redirect_uri", redirectUri);
-        body.add("client_id", clientId);
-        body.add("client_secret", clientSecret);
-
-        LoginResponse response = authSpotifyClient.loginWithAuthorizationCode(body);
-        return response.getAccessToken();
+    public void saveSpotifyToken(String userId, String accessToken) {
+        Optional<User> optionalUser = userRepository.findById(Long.parseLong(userId));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setSpotifyToken(accessToken);
+            userRepository.save(user);
+        }
     }
 }

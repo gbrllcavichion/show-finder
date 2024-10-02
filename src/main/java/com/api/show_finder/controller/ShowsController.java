@@ -1,17 +1,15 @@
 package com.api.show_finder.controller;
 
+import com.api.show_finder.domain.model.Artist;
 import com.api.show_finder.domain.model.ConcertDetails;
 import com.api.show_finder.domain.model.User;
 import com.api.show_finder.domain.repository.UserRepository;
 import com.api.show_finder.services.EventimService;
+import com.api.show_finder.services.SpotifyService;
 import com.api.show_finder.services.TicketScrapingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,25 +18,20 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/shows")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ShowsController {
+
     private final TicketScrapingService ticketScrapingService;
     private final EventimService eventimService;
     private final UserRepository userRepository;
+    private final SpotifyService spotifyService;
 
-    public ShowsController(TicketScrapingService ticketScrapingService, EventimService eventimService, UserRepository userRepository) {
+    public ShowsController(TicketScrapingService ticketScrapingService, EventimService eventimService,
+                           UserRepository userRepository, SpotifyService spotifyService) {
         this.ticketScrapingService = ticketScrapingService;
         this.eventimService = eventimService;
         this.userRepository = userRepository;
-    }
-
-    @GetMapping("/fetch-ticketmaster-concerts")
-    public List<ConcertDetails> fetchConcerts() {
-        return ticketScrapingService.fetchConcertDetails();
-    }
-
-    @GetMapping("/fetch-international-shows")
-    public List<ConcertDetails> fetchInternationalShows() {
-        return eventimService.fetchInternationalShows();
+        this.spotifyService = spotifyService;
     }
 
     @GetMapping("/user-shows/{userId}")
@@ -50,7 +43,9 @@ public class ShowsController {
         }
 
         User user = userOptional.get();
-        List<String> favoriteArtists = user.getFavoriteArtists();
+        String spotifyToken = user.getSpotifyToken();
+
+        List<Artist> favoriteArtists = spotifyService.getUserTopArtists(spotifyToken);
 
         List<ConcertDetails> allShows = new ArrayList<>();
         List<ConcertDetails> ticketMasterShows = ticketScrapingService.fetchConcertDetails();
@@ -61,7 +56,7 @@ public class ShowsController {
 
         List<ConcertDetails> favoriteArtistShows = allShows.stream()
                 .filter(show -> favoriteArtists.stream()
-                        .anyMatch(artist -> show.getEvent().toLowerCase().contains(artist.toLowerCase())))
+                        .anyMatch(artist -> show.getEvent().toLowerCase().contains(artist.getName().toLowerCase())))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(favoriteArtistShows);

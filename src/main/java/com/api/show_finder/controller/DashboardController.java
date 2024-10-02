@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-
 @Controller
 public class DashboardController {
 
@@ -21,11 +20,19 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard")
-    public String getDashboard(@RequestParam("userId") ObjectId userId, Model model) {
-        List<ConcertDetails> favoriteArtistShows = showsService.getUserFavoriteConcerts(userId);
+    public String getDashboard(@RequestParam("userId") String userId, Model model) {
+        ObjectId objectId;
+        try {
+            objectId = new ObjectId(userId);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Parâmetro userId inválido.");
+        }
+
+        List<ConcertDetails> favoriteArtistShows = showsService.getUserFavoriteConcerts(objectId);
 
         model.addAttribute("favoriteArtistShows", favoriteArtistShows);
-
         return "dashboard";
     }
+
 }
+

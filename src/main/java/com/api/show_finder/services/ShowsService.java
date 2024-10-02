@@ -32,7 +32,8 @@ public class ShowsService {
         }
 
         User user = userOptional.get();
-        List<String> favoriteArtists = user.getFavoriteArtists();
+
+        final List<String> favoriteArtists = (user.getFavoriteArtists() == null) ? new ArrayList<>() : user.getFavoriteArtists();
 
         List<ConcertDetails> allShows = new ArrayList<>();
         List<ConcertDetails> ticketMasterShows = ticketScrapingService.fetchConcertDetails();
@@ -41,22 +42,12 @@ public class ShowsService {
         allShows.addAll(ticketMasterShows);
         allShows.addAll(eventimShows);
 
-        List<ConcertDetails> favoriteArtistShows = allShows.stream()
+        return allShows.stream()
                 .filter(show -> favoriteArtists.stream()
-                        .anyMatch(artist -> show.getEvent().toLowerCase().contains(artist.toLowerCase())))
+                        .anyMatch(artist -> show.getEvent().toLowerCase().contains(artist.toLowerCase()))
+                )
                 .collect(Collectors.toList());
-
-        return favoriteArtistShows;
     }
 
-    public List<ConcertDetails> getAllAvailableConcerts() {
-        List<ConcertDetails> allShows = new ArrayList<>();
-        List<ConcertDetails> ticketMasterShows = ticketScrapingService.fetchConcertDetails();
-        List<ConcertDetails> eventimShows = eventimService.fetchInternationalShows();
-
-        allShows.addAll(ticketMasterShows);
-        allShows.addAll(eventimShows);
-
-        return allShows;
-    }
 }
+
