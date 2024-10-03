@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SpotifyService {
 
     private static final String SPOTIFY_API_URL = "https://api.spotify.com/v1/me/top/artists";
 
-    public List<Artist> getUserTopArtists(String token) {
+    public List<String> getUserTopArtists(String token) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
@@ -24,7 +25,9 @@ public class SpotifyService {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody().getItems();
+            return response.getBody().getItems().stream()
+                    .map(Artist::getName)
+                    .collect(Collectors.toList());
         } else {
             throw new RuntimeException("Falha ao buscar os artistas do usuário");
         }

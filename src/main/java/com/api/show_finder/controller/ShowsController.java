@@ -20,12 +20,12 @@ public class ShowsController {
     }
 
     @GetMapping("/fetch-ticketmaster-concerts")
-    public List<ConcertDetails> fetchConcerts() {
+    public List<ConcertDetails> fetchTicketMasterConcerts() {
         return ticketScrapingService.fetchConcertDetails();
     }
 
-    @GetMapping("/fetch-international-shows")
-    public List<ConcertDetails> fetchInternationalShows() {
+    @GetMapping("/fetch-eventim-shows")
+    public List<ConcertDetails> fetchEventimShows() {
         return eventimService.fetchInternationalShows();
     }
 }

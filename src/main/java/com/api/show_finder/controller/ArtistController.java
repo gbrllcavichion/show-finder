@@ -1,6 +1,5 @@
 package com.api.show_finder.controller;
 
-import com.api.show_finder.domain.model.Artist;
 import com.api.show_finder.services.SpotifyService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -24,7 +23,7 @@ public class ArtistController {
     }
 
     @GetMapping("/top")
-    public List<Artist> getTopArtists(OAuth2AuthenticationToken authenticationToken) {
+    public List<String> getTopArtists(OAuth2AuthenticationToken authenticationToken) {
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
                 authenticationToken.getAuthorizedClientRegistrationId(),
                 authenticationToken.getName()
