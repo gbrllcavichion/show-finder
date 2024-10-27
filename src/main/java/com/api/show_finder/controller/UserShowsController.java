@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/shows")
 public class UserShowsController {
     private final SpotifyService spotifyService;
-    private final TicketScrapingService ticketScrapingService;
     private final EventimService eventimService;
     private final OAuth2AuthorizedClientService authorizedClientService;
 
@@ -28,7 +27,6 @@ public class UserShowsController {
                                EventimService eventimService,
                                OAuth2AuthorizedClientService authorizedClientService) {
         this.spotifyService = spotifyService;
-        this.ticketScrapingService = ticketScrapingService;
         this.eventimService = eventimService;
         this.authorizedClientService = authorizedClientService;
     }
@@ -47,14 +45,10 @@ public class UserShowsController {
         String accessToken = client.getAccessToken().getTokenValue();
         List<String> favoriteArtists = spotifyService.getUserTopArtists(accessToken);
 
-        List<ConcertDetails> allShows = new ArrayList<>();
-        allShows.addAll(ticketScrapingService.fetchConcertDetails());
-        allShows.addAll(eventimService.fetchInternationalShows());
+        List<ConcertDetails> allShows = new ArrayList<>(eventimService.fetchInternationalShows());
 
-        List<ConcertDetails> matchedShows = allShows.stream()
+        return allShows.stream()
                 .filter(show -> favoriteArtists.stream().anyMatch(artist -> show.getEvent().toLowerCase().contains(artist.toLowerCase())))
                 .collect(Collectors.toList());
-
-        return matchedShows;
     }
 }

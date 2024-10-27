@@ -26,7 +26,7 @@ public class TicketScrapingService {
             for (Element event : eventDetails) {
                 String artistAndCity = event.select("h3").text();
                 String eventDate = event.select("strong").text();
-                concertDetailsList.add(new ConcertDetails(artistAndCity, eventDate));
+                //concertDetailsList.add(new ConcertDetails(artistAndCity, eventDate));
             }
 
         } catch (IOException e) {

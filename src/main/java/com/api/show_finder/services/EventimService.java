@@ -19,6 +19,7 @@ public class EventimService {
 
     private static final String EVENTIM_API_URL = "https://public-api.eventim.com/websearch/search/api/exploration/v2/productGroups";
 
+
     public List<ConcertDetails> fetchInternationalShows() {
         List<ConcertDetails> concertDetailsList = new ArrayList<>();
 
@@ -42,8 +43,16 @@ public class EventimService {
                 String artistAndCity = productGroup.get("name").asText();
                 String eventDate = productGroup.get("startDate").asText();
 
-                concertDetailsList.add(new ConcertDetails(artistAndCity, eventDate));
+                JsonNode productsNode = productGroup.get("products").get(0);
+                JsonNode locationNode = productsNode.get("typeAttributes").get("liveEntertainment").get("location");
+                String locationName = locationNode.get("name").asText();
+                String city = locationNode.get("city").asText();
+
+                String cityAbbreviation = CityAbbreviationMapper.getCityAbbreviation(city);
+
+                concertDetailsList.add(new ConcertDetails(artistAndCity, eventDate, locationName, cityAbbreviation));
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
